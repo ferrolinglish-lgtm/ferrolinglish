@@ -7,18 +7,18 @@
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Code+Pro:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --navy: #0d1b2a;
-    --navy2: #0f2035;
-    --navy3: #071525;
-    --blue: #1a3050;
-    --blue2: #2a4a6a;
-    --gold: #c8900a;
-    --gold2: #e8a820;
-    --cream: #e8dcc8;
-    --green: #4ecf9e;
-    --muted: #556677;
-    --text: #b8ccd8;
-    --red: #cf4e4e;
+    --navy: #1a2e45;
+    --navy2: #ffffff;
+    --navy3: #f4f1eb;
+    --blue: #e8e2d6;
+    --blue2: #c8bfaa;
+    --gold: #b8780a;
+    --gold2: #d4920e;
+    --cream: #1a2e45;
+    --green: #1a7a52;
+    --muted: #7a6e5e;
+    --text: #3a3228;
+    --red: #a83030;
     --mono: 'Source Code Pro', monospace;
     --serif: 'Playfair Display', Georgia, serif;
     --sans: 'Lato', sans-serif;
@@ -27,8 +27,8 @@
   * { box-sizing: border-box; margin: 0; padding: 0; }
 
   body {
-    background: var(--navy);
-    color: var(--cream);
+    background: #f4f1eb;
+    color: #1a2e45;
     font-family: var(--sans);
     min-height: 100vh;
     padding-bottom: 40px;
@@ -36,8 +36,8 @@
 
   /* HEADER */
   .header {
-    background: linear-gradient(160deg, #0a1628 0%, #1a3050 60%, #0a1628 100%);
-    border-bottom: 2px solid var(--gold);
+    background: linear-gradient(160deg, #1a2e45 0%, #243d5a 60%, #1a2e45 100%);
+    border-bottom: 3px solid var(--gold);
     padding: 22px 16px 18px;
     text-align: center;
     position: relative;
@@ -46,7 +46,7 @@
   .header::before {
     content: '';
     position: absolute; inset: 0;
-    background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(200,144,10,0.03) 20px, rgba(200,144,10,0.03) 21px);
+    background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(200,144,10,0.05) 20px, rgba(200,144,10,0.05) 21px);
   }
   .header-eyebrow {
     font-family: var(--mono);
@@ -60,45 +60,49 @@
     font-family: var(--serif);
     font-size: 32px;
     font-weight: 900;
-    color: var(--cream);
+    color: #f4f1eb;
     letter-spacing: 1px;
     line-height: 1;
   }
   .header-sub {
     font-family: var(--mono);
     font-size: 10px;
-    color: var(--muted);
+    color: #8899aa;
     margin-top: 5px;
     letter-spacing: 2px;
   }
   .header-anchor {
     position: absolute; right: 16px; top: 50%;
     transform: translateY(-50%);
-    font-size: 28px; opacity: 0.15;
+    font-size: 28px; opacity: 0.2;
+    color: var(--gold);
   }
 
   /* TABS */
   .tabs {
     display: flex;
-    background: var(--navy3);
-    border-bottom: 1px solid var(--blue);
+    background: #ffffff;
+    border-bottom: 2px solid #e8e2d6;
     position: sticky; top: 0; z-index: 100;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
   }
   .tab {
-    flex: 1; padding: 12px 6px;
+    flex: 1; padding: 13px 6px;
     text-align: center;
     font-family: var(--mono);
     font-size: 10px;
     letter-spacing: 1px;
-    color: var(--muted);
+    color: #9a8e7e;
     cursor: pointer;
-    border-bottom: 2px solid transparent;
+    border-bottom: 3px solid transparent;
     transition: all 0.2s;
     text-transform: uppercase;
+    background: white;
   }
   .tab.active {
     color: var(--gold);
     border-bottom-color: var(--gold);
+    font-weight: 700;
   }
 
   /* PANELS */
@@ -107,7 +111,7 @@
 
   /* CARD */
   .card {
-    background: var(--navy2);
+    background: #ffffff;
     border: 1px solid var(--blue);
     border-radius: 10px;
     padding: 14px;
@@ -125,7 +129,7 @@
   /* INPUTS */
   input[type=text], textarea {
     width: 100%;
-    background: var(--navy3);
+    background: #f4f1eb;
     border: 1px solid var(--blue2);
     border-radius: 6px;
     color: var(--cream);
@@ -138,7 +142,7 @@
   input[type=text]:focus, textarea:focus {
     border-color: var(--gold);
   }
-  input::placeholder, textarea::placeholder { color: var(--blue2); }
+  input::placeholder, textarea::placeholder { color: #c8bfaa; }
 
   /* BUTTONS */
   .btn {
@@ -159,7 +163,7 @@
     color: var(--navy);
   }
   .btn-primary:disabled {
-    background: var(--blue);
+    background: #e8e2d6;
     color: var(--muted);
     cursor: not-allowed;
   }
@@ -208,7 +212,7 @@
   }
   .img-clear {
     position: absolute; top: 7px; right: 7px;
-    background: rgba(7,21,37,0.85);
+    background: rgba(244,241,235,0.9);
     border: 1px solid var(--blue2);
     color: var(--cream);
     border-radius: 50%;
@@ -220,7 +224,7 @@
 
   /* RESULT CARD */
   .result-card {
-    background: var(--navy3);
+    background: #f4f1eb;
     border-radius: 10px;
     padding: 16px;
     margin-bottom: 12px;
@@ -276,7 +280,7 @@
     gap: 8px; margin-bottom: 10px;
   }
   .result-cell {
-    background: rgba(26,48,80,0.5);
+    background: #f0ece3;
     border-radius: 6px; padding: 9px 11px;
   }
   .cell-label {
@@ -289,7 +293,7 @@
     font-size: 13px; font-weight: 700;
   }
   .obs-box {
-    background: rgba(26,48,80,0.5);
+    background: #f0ece3;
     border-radius: 6px; padding: 11px;
     margin-bottom: 10px;
   }
@@ -299,13 +303,13 @@
   .history-list { display: flex; flex-direction: column; gap: 6px; }
   .history-item {
     display: flex; align-items: center; gap: 10px;
-    background: var(--navy3);
+    background: #f4f1eb;
     border-radius: 7px; padding: 10px 12px;
     border-left: 3px solid var(--blue2);
     cursor: pointer;
     transition: background 0.15s;
   }
-  .history-item:hover { background: var(--blue); }
+  .history-item:hover { background: #e8e2d6; }
   .history-forma { font-family: var(--serif); font-size: 16px; font-weight: 700; }
   .history-meta { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; }
   .history-badges { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
@@ -322,20 +326,20 @@
 
   /* ALERT */
   .alert { border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 12px; }
-  .alert-err { background: rgba(207,78,78,0.1); border: 1px solid var(--red); color: #cf8e8e; }
+  .alert-err { background: #fdf0f0; border: 1px solid #c05050; color: #a03030; }
   .alert-ok  { background: rgba(78,207,158,0.1); border: 1px solid var(--green); color: var(--green); }
 
   /* CANVAS (hidden, for card generation) */
   #anexo-canvas { display: none; }
 
   /* EMPTY STATE */
-  .empty { text-align: center; padding: 40px 20px; color: var(--muted); font-family: var(--mono); font-size: 12px; letter-spacing: 1px; }
+  .empty { text-align: center; padding: 40px 20px; color: #9a8e7e; font-family: var(--mono); font-size: 12px; letter-spacing: 1px; }
   .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.3; }
 
   /* SCROLL */
   ::-webkit-scrollbar { width: 4px; }
-  ::-webkit-scrollbar-track { background: var(--navy3); }
-  ::-webkit-scrollbar-thumb { background: var(--blue2); border-radius: 2px; }
+  ::-webkit-scrollbar-track { background: #f4f1eb; }
+  ::-webkit-scrollbar-thumb { background: #c8bfaa; border-radius: 2px; }
 </style>
 </head>
 <body>
@@ -696,11 +700,11 @@ function generarFichaCanvas(entry, callback) {
   const col = TYPE_COLORS[entry.tipo_codigo] || '#556677';
 
   // ── Fondo ──
-  ctx.fillStyle = '#0d1b2a';
+  ctx.fillStyle = '#f4f1eb';
   ctx.fillRect(0, 0, W, H);
 
   // ── Patrón de fondo ──
-  ctx.strokeStyle = 'rgba(200,144,10,0.04)';
+  ctx.strokeStyle = 'rgba(26,46,69,0.04)';
   ctx.lineWidth = 1;
   for (let i = 0; i < W + H; i += 28) {
     ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(0, i); ctx.stroke();
@@ -708,7 +712,7 @@ function generarFichaCanvas(entry, callback) {
 
   // ── Cabecera ──
   const grad = ctx.createLinearGradient(0,0,W,80);
-  grad.addColorStop(0,'#0a1628'); grad.addColorStop(0.5,'#1a3050'); grad.addColorStop(1,'#0a1628');
+  grad.addColorStop(0,'#1a2e45'); grad.addColorStop(0.5,'#243d5a'); grad.addColorStop(1,'#1a2e45');
   ctx.fillStyle = grad;
   ctx.fillRect(0, 0, W, 100);
 
@@ -722,11 +726,11 @@ function generarFichaCanvas(entry, callback) {
   ctx.fillText('CLASIFICADOR DE CAMPO · ANGLICISMOS GEI', 32, 32);
   ctx.letterSpacing = '0px';
 
-  ctx.fillStyle = '#e8dcc8';
+  ctx.fillStyle = '#1a2e45';
   ctx.font = '900 38px Georgia';
   ctx.fillText('Ferrolinglish', 30, 78);
 
-  ctx.fillStyle = '#556677';
+  ctx.fillStyle = '#7a6e5e';
   ctx.font = '11px "Courier New"';
   ctx.fillText('Paisaje lingüístico comercial · Universidade da Coruña · Tesis doctoral 2026', 30, 96);
 
@@ -735,7 +739,7 @@ function generarFichaCanvas(entry, callback) {
   ctx.font = '700 12px "Courier New"';
   ctx.textAlign = 'right';
   ctx.fillText(`FICHA #${String(entry.id).slice(-6)}`, W - 30, 50);
-  ctx.fillStyle = '#556677';
+  ctx.fillStyle = '#7a6e5e';
   ctx.font = '11px "Courier New"';
   ctx.fillText(entry.timestamp, W - 30, 68);
   ctx.textAlign = 'left';
@@ -759,7 +763,7 @@ function generarFichaCanvas(entry, callback) {
       ctx.drawImage(img, dx, y, dW, dH);
       ctx.restore();
 
-      ctx.strokeStyle = '#2a4a6a'; ctx.lineWidth = 1;
+      ctx.strokeStyle = '#c8bfaa'; ctx.lineWidth = 1;
       ctx.beginPath(); roundRect(ctx, 30, y, fW, fH, 8); ctx.stroke();
 
       y += fH + 18;
@@ -780,7 +784,7 @@ function generarFichaCanvas(entry, callback) {
     ctx.fillStyle = col;
     ctx.fillRect(30, y, 5, 80);
 
-    ctx.fillStyle = '#e8dcc8';
+    ctx.fillStyle = '#1a2e45';
     ctx.font = '900 44px Georgia';
     ctx.fillText(entry.forma, 48, y + 52);
 
@@ -806,7 +810,7 @@ function generarFichaCanvas(entry, callback) {
 
     // ── ESTABLECIMIENTO ──
     if (entry.establecimiento) {
-      ctx.fillStyle = '#b8ccd8';
+      ctx.fillStyle = '#3a3228';
       ctx.font = '14px "Courier New"';
       ctx.fillText('📍 ' + entry.establecimiento, 330, y + 23);
     }
@@ -820,11 +824,11 @@ function generarFichaCanvas(entry, callback) {
     ];
     cells.forEach((c, i) => {
       const cx = 30 + i * 200;
-      ctx.fillStyle = '#0f2035';
+      ctx.fillStyle = '#ffffff';
       roundRect(ctx, cx, y, 185, 60, 6); ctx.fill();
-      ctx.strokeStyle = '#1e3a5a'; ctx.lineWidth = 1;
+      ctx.strokeStyle = '#e8e2d6'; ctx.lineWidth = 1;
       ctx.beginPath(); roundRect(ctx, cx, y, 185, 60, 6); ctx.stroke();
-      ctx.fillStyle = '#556677'; ctx.font = '9px "Courier New"';
+      ctx.fillStyle = '#7a6e5e'; ctx.font = '9px "Courier New"';
       ctx.fillText(c.label, cx + 12, y + 17);
       ctx.fillStyle = c.label === 'CONFIANZA'
         ? (c.val === 'ALTA' ? '#4ecf9e' : c.val === 'MEDIA' ? '#c8900a' : '#cf4e4e')
@@ -835,29 +839,29 @@ function generarFichaCanvas(entry, callback) {
     y += 78;
 
     // ── OBSERVACIÓN ──
-    ctx.fillStyle = '#0f2035';
+    ctx.fillStyle = '#ffffff';
     roundRect(ctx, 30, y, W - 60, 90, 8); ctx.fill();
-    ctx.strokeStyle = '#1e3a5a'; ctx.lineWidth = 1;
+    ctx.strokeStyle = '#e8e2d6'; ctx.lineWidth = 1;
     ctx.beginPath(); roundRect(ctx, 30, y, W - 60, 90, 8); ctx.stroke();
-    ctx.fillStyle = '#556677'; ctx.font = '9px "Courier New"';
+    ctx.fillStyle = '#7a6e5e'; ctx.font = '9px "Courier New"';
     ctx.fillText('OBSERVACIÓN', 44, y + 18);
-    ctx.fillStyle = '#b8ccd8'; ctx.font = '13px Georgia';
+    ctx.fillStyle = '#3a3228'; ctx.font = '13px Georgia';
     wrapText(ctx, entry.observacion, 44, y + 38, W - 88, 20);
 
     y += 108;
 
     // ── LOCALIZACIÓN ──
     if (entry.location) {
-      ctx.fillStyle = '#0f2035';
+      ctx.fillStyle = '#ffffff';
       roundRect(ctx, 30, y, W - 60, 62, 8); ctx.fill();
-      ctx.strokeStyle = '#1e3a5a'; ctx.lineWidth = 1;
+      ctx.strokeStyle = '#e8e2d6'; ctx.lineWidth = 1;
       ctx.beginPath(); roundRect(ctx, 30, y, W - 60, 62, 8); ctx.stroke();
-      ctx.fillStyle = '#556677'; ctx.font = '9px "Courier New"';
+      ctx.fillStyle = '#7a6e5e'; ctx.font = '9px "Courier New"';
       ctx.fillText('LOCALIZACIÓN GPS', 44, y + 18);
       ctx.fillStyle = '#4ecf9e'; ctx.font = '700 13px "Courier New"';
       ctx.fillText(`${entry.location.lat}, ${entry.location.lon}  ±${entry.location.acc}m`, 44, y + 40);
       ctx.textAlign = 'right';
-      ctx.fillStyle = '#556677'; ctx.font = '11px "Courier New"';
+      ctx.fillStyle = '#7a6e5e'; ctx.font = '11px "Courier New"';
       ctx.fillText(entry.timestamp, W - 44, y + 40);
       ctx.textAlign = 'left';
       y += 80;
@@ -866,7 +870,7 @@ function generarFichaCanvas(entry, callback) {
     // ── PIE ──
     ctx.strokeStyle = '#c8900a44'; ctx.lineWidth = 1;
     ctx.beginPath(); ctx.moveTo(30, H - 36); ctx.lineTo(W - 30, H - 36); ctx.stroke();
-    ctx.fillStyle = '#2a3a4a'; ctx.font = '10px "Courier New"';
+    ctx.fillStyle = '#9a8e7e'; ctx.font = '10px "Courier New"';
     ctx.fillText('El inglés entró por los monos de trabajo y sale por las tiendas · J. F. Pereira Ameneiro', 30, H - 16);
     ctx.textAlign = 'right';
     ctx.fillText('UDC · Narón 2026', W - 30, H - 16);
