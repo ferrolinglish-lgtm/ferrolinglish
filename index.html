@@ -1,0 +1,1040 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ferrolinglish · Clasificador de campo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Code+Pro:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy2: #0f2035;
+    --navy3: #071525;
+    --blue: #1a3050;
+    --blue2: #2a4a6a;
+    --gold: #c8900a;
+    --gold2: #e8a820;
+    --cream: #e8dcc8;
+    --green: #4ecf9e;
+    --muted: #556677;
+    --text: #b8ccd8;
+    --red: #cf4e4e;
+    --mono: 'Source Code Pro', monospace;
+    --serif: 'Playfair Display', Georgia, serif;
+    --sans: 'Lato', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--navy);
+    color: var(--cream);
+    font-family: var(--sans);
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(160deg, #0a1628 0%, #1a3050 60%, #0a1628 100%);
+    border-bottom: 2px solid var(--gold);
+    padding: 22px 16px 18px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .header::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(200,144,10,0.03) 20px, rgba(200,144,10,0.03) 21px);
+  }
+  .header-eyebrow {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 5px;
+    color: var(--gold);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .header-title {
+    font-family: var(--serif);
+    font-size: 32px;
+    font-weight: 900;
+    color: var(--cream);
+    letter-spacing: 1px;
+    line-height: 1;
+  }
+  .header-sub {
+    font-family: var(--mono);
+    font-size: 10px;
+    color: var(--muted);
+    margin-top: 5px;
+    letter-spacing: 2px;
+  }
+  .header-anchor {
+    position: absolute; right: 16px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 28px; opacity: 0.15;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    background: var(--navy3);
+    border-bottom: 1px solid var(--blue);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .tab {
+    flex: 1; padding: 12px 6px;
+    text-align: center;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    color: var(--muted);
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .tab.active {
+    color: var(--gold);
+    border-bottom-color: var(--gold);
+  }
+
+  /* PANELS */
+  .panel { display: none; padding: 14px; }
+  .panel.active { display: block; }
+
+  /* CARD */
+  .card {
+    background: var(--navy2);
+    border: 1px solid var(--blue);
+    border-radius: 10px;
+    padding: 14px;
+    margin-bottom: 12px;
+  }
+  .card-label {
+    font-family: var(--mono);
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  /* INPUTS */
+  input[type=text], textarea {
+    width: 100%;
+    background: var(--navy3);
+    border: 1px solid var(--blue2);
+    border-radius: 6px;
+    color: var(--cream);
+    padding: 11px 13px;
+    font-size: 17px;
+    font-family: var(--mono);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  input[type=text]:focus, textarea:focus {
+    border-color: var(--gold);
+  }
+  input::placeholder, textarea::placeholder { color: var(--blue2); }
+
+  /* BUTTONS */
+  .btn {
+    width: 100%;
+    border: none;
+    border-radius: 7px;
+    padding: 13px;
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--mono);
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), var(--gold2));
+    color: var(--navy);
+  }
+  .btn-primary:disabled {
+    background: var(--blue);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: transparent;
+    border: 1px solid var(--blue2);
+    color: var(--text);
+  }
+  .btn-green {
+    background: transparent;
+    border: 1px solid var(--green);
+    color: var(--green);
+  }
+  .btn-small {
+    width: auto;
+    padding: 7px 14px;
+    font-size: 11px;
+    letter-spacing: 1px;
+  }
+  .btn-row { display: flex; gap: 8px; }
+  .btn-row .btn { flex: 1; }
+
+  /* GEO */
+  .geo-bar {
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .geo-coords {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--green);
+    line-height: 1.4;
+  }
+
+  /* IMAGE PREVIEW */
+  .img-preview {
+    position: relative;
+    margin-top: 10px;
+  }
+  .img-preview img {
+    width: 100%;
+    border-radius: 7px;
+    border: 1px solid var(--blue2);
+    max-height: 200px;
+    object-fit: cover;
+    display: block;
+  }
+  .img-clear {
+    position: absolute; top: 7px; right: 7px;
+    background: rgba(7,21,37,0.85);
+    border: 1px solid var(--blue2);
+    color: var(--cream);
+    border-radius: 50%;
+    width: 26px; height: 26px;
+    font-size: 16px; line-height: 24px;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  /* RESULT CARD */
+  .result-card {
+    background: var(--navy3);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    animation: fadeUp 0.35s ease;
+    position: relative;
+    overflow: hidden;
+  }
+  .result-card::before {
+    content: '';
+    position: absolute; left: 0; top: 0; bottom: 0;
+    width: 4px;
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .result-forma {
+    font-family: var(--serif);
+    font-size: 30px;
+    font-weight: 900;
+    color: var(--cream);
+    line-height: 1.1;
+    margin-bottom: 8px;
+    padding-left: 10px;
+  }
+  .badge {
+    display: inline-block;
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1.5px;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    margin-bottom: 12px;
+    margin-left: 10px;
+  }
+  .gei-star {
+    float: right;
+    background: rgba(200,144,10,0.15);
+    border: 1px solid var(--gold);
+    color: var(--gold);
+    font-family: var(--mono);
+    font-size: 10px;
+    letter-spacing: 1px;
+    padding: 6px 10px;
+    border-radius: 7px;
+    text-align: center;
+    line-height: 1.4;
+    margin: 0 0 8px 8px;
+  }
+  .result-grid {
+    display: grid; grid-template-columns: 1fr 1fr;
+    gap: 8px; margin-bottom: 10px;
+  }
+  .result-cell {
+    background: rgba(26,48,80,0.5);
+    border-radius: 6px; padding: 9px 11px;
+  }
+  .cell-label {
+    font-family: var(--mono);
+    font-size: 9px; letter-spacing: 2px;
+    color: var(--muted); margin-bottom: 3px;
+    text-transform: uppercase;
+  }
+  .cell-val {
+    font-size: 13px; font-weight: 700;
+  }
+  .obs-box {
+    background: rgba(26,48,80,0.5);
+    border-radius: 6px; padding: 11px;
+    margin-bottom: 10px;
+  }
+  .obs-text { font-size: 13px; line-height: 1.6; color: var(--text); }
+
+  /* HISTORY */
+  .history-list { display: flex; flex-direction: column; gap: 6px; }
+  .history-item {
+    display: flex; align-items: center; gap: 10px;
+    background: var(--navy3);
+    border-radius: 7px; padding: 10px 12px;
+    border-left: 3px solid var(--blue2);
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .history-item:hover { background: var(--blue); }
+  .history-forma { font-family: var(--serif); font-size: 16px; font-weight: 700; }
+  .history-meta { font-family: var(--mono); font-size: 10px; color: var(--muted); margin-top: 2px; }
+  .history-badges { margin-left: auto; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+  /* SPINNER */
+  .spinner {
+    display: inline-block; width: 14px; height: 14px;
+    border: 2px solid var(--muted); border-top-color: var(--gold);
+    border-radius: 50%; animation: spin 0.7s linear infinite;
+    vertical-align: middle; margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ALERT */
+  .alert { border-radius: 8px; padding: 12px 14px; font-size: 13px; margin-bottom: 12px; }
+  .alert-err { background: rgba(207,78,78,0.1); border: 1px solid var(--red); color: #cf8e8e; }
+  .alert-ok  { background: rgba(78,207,158,0.1); border: 1px solid var(--green); color: var(--green); }
+
+  /* CANVAS (hidden, for card generation) */
+  #anexo-canvas { display: none; }
+
+  /* EMPTY STATE */
+  .empty { text-align: center; padding: 40px 20px; color: var(--muted); font-family: var(--mono); font-size: 12px; letter-spacing: 1px; }
+  .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: 0.3; }
+
+  /* SCROLL */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--navy3); }
+  ::-webkit-scrollbar-thumb { background: var(--blue2); border-radius: 2px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-anchor">⚓</div>
+  <div class="header-eyebrow">Clasificador de campo</div>
+  <div class="header-title">Ferrolinglish</div>
+  <div class="header-sub">Paisaje lingüístico · Anglicismos GEI · UDC 2026</div>
+</div>
+
+<div class="tabs">
+  <div class="tab active" onclick="switchTab('clasificar')">📷 Clasificar</div>
+  <div class="tab" onclick="switchTab('corpus')">📂 Corpus</div>
+  <div class="tab" onclick="switchTab('ayuda')">ℹ️ Ayuda</div>
+</div>
+
+<!-- ===================== TAB: CLASIFICAR ===================== -->
+<div id="panel-clasificar" class="panel active">
+
+  <!-- GEO -->
+  <div class="card">
+    <div class="card-label">Ubicación GPS</div>
+    <div class="geo-bar">
+      <button class="btn btn-secondary btn-small" id="geo-btn" onclick="getLocation()">⊕ Obtener ubicación</button>
+      <div id="geo-display" style="font-family:var(--mono);font-size:11px;color:var(--muted)">Sin ubicación</div>
+    </div>
+  </div>
+
+  <!-- ENTRADA -->
+  <div class="card">
+    <div class="card-label">Entrada</div>
+
+    <!-- Establecimiento (opcional) -->
+    <input type="text" id="input-establecimiento" placeholder="Nombre del establecimiento (opcional)" style="margin-bottom:10px;font-size:14px;">
+
+    <!-- Anglicismo / texto del rótulo -->
+    <input type="text" id="input-texto" placeholder="Anglicismo o texto del rótulo…" style="margin-bottom:10px;font-size:19px;" onkeydown="if(event.key==='Enter')clasificar()">
+
+    <!-- Imagen -->
+    <div class="btn-row" style="margin-bottom:10px;">
+      <button class="btn btn-secondary" onclick="document.getElementById('file-galeria').click()">📁 Galería</button>
+      <button class="btn btn-secondary" onclick="document.getElementById('file-camara').click()">📷 Cámara</button>
+    </div>
+    <input type="file" id="file-galeria" accept="image/*" style="display:none" onchange="handleImage(this)">
+    <input type="file" id="file-camara" accept="image/*" capture="environment" style="display:none" onchange="handleImage(this)">
+
+    <div id="img-preview-container"></div>
+
+    <button class="btn btn-primary" id="btn-clasificar" onclick="clasificar()">Clasificar</button>
+  </div>
+
+  <!-- ERROR -->
+  <div id="error-box" style="display:none"></div>
+
+  <!-- RESULTADO -->
+  <div id="result-container"></div>
+
+</div>
+
+<!-- ===================== TAB: CORPUS ===================== -->
+<div id="panel-corpus" class="panel">
+  <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+    <button class="btn btn-green btn-small" onclick="exportCSV()" style="width:auto">↓ Exportar CSV</button>
+    <button class="btn btn-secondary btn-small" onclick="clearCorpus()" style="width:auto;border-color:var(--red);color:var(--red)">🗑 Vaciar corpus</button>
+    <span style="font-family:var(--mono);font-size:11px;color:var(--muted);padding:7px 0" id="corpus-count"></span>
+  </div>
+  <div id="history-container"></div>
+</div>
+
+<!-- ===================== TAB: AYUDA ===================== -->
+<div id="panel-ayuda" class="panel">
+  <div class="card">
+    <div class="card-label">Cómo funciona</div>
+    <div style="font-size:13px;line-height:1.8;color:var(--text)">
+      <p style="margin-bottom:10px">Esta herramienta clasifica anglicismos en el paisaje lingüístico comercial usando IA. Funciona en cualquier móvil desde el navegador, sin instalar nada.</p>
+      <p style="margin-bottom:6px;font-weight:700;color:var(--cream)">Flujo recomendado:</p>
+      <ol style="padding-left:18px;margin-bottom:12px">
+        <li style="margin-bottom:5px">Obtén tu ubicación GPS</li>
+        <li style="margin-bottom:5px">Escribe el anglicismo <em>o</em> fotografía el rótulo</li>
+        <li style="margin-bottom:5px">Pulsa Clasificar y espera el resultado</li>
+        <li style="margin-bottom:5px">Descarga la <strong>ficha Anexo XII</strong> como imagen</li>
+        <li>Exporta el corpus a CSV cuando quieras</li>
+      </ol>
+      <p style="color:var(--muted);font-size:12px">Los datos se guardan en tu dispositivo. El CSV es compatible con BD_Anglicismos_Ferrol.</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Tipos de anglicismo</div>
+    <div style="font-size:12px;line-height:1.9;font-family:var(--mono);color:var(--text)">
+      <div><span style="color:var(--gold)">★ GEI stricto sensu</span> — Híbrido galego-inglés exclusivo de Ferrolterra</div>
+      <div><span style="color:#7aa8cc">GEI sensu lato</span> — Anglicismo en nomenclatura comercial ferrolana</div>
+      <div><span style="color:#a0c0a0">Crudo</span> — Sin adaptación (shop, fitness, coffee)</div>
+      <div><span style="color:#c0b080">Adaptado</span> — Con adaptación gráfica o morfológica</div>
+      <div><span style="color:#c080c0">Pseudoanglicismo</span> — Parece inglés pero no existe en inglés</div>
+      <div><span style="color:#c0a080">Calco semántico</span> — Traducción literal de expresión inglesa</div>
+      <div><span style="color:#c08080">Falso anglicismo</span> — Apariencia inglesa, otro origen</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-label">Compartir con la familia</div>
+    <div style="font-size:13px;line-height:1.7;color:var(--text);margin-bottom:12px">
+      Abre esta página en el navegador del móvil y guarda el enlace o añade a la pantalla de inicio. Comparte el mismo enlace por WhatsApp con quien quieras que colabore.
+    </div>
+    <button class="btn btn-secondary btn-small" onclick="shareApp()" style="width:auto">🔗 Compartir esta app</button>
+  </div>
+</div>
+
+<!-- CANVAS OCULTO PARA GENERAR FICHAS -->
+<canvas id="anexo-canvas"></canvas>
+
+<script>
+// ══════════════════════════════════════════════════════
+// ESTADO
+// ══════════════════════════════════════════════════════
+let currentLocation = null;
+let currentImage = { base64: null, preview: null, mediaType: null };
+let corpus = JSON.parse(localStorage.getItem('ferrolinglish_corpus') || '[]');
+
+const TYPE_COLORS = {
+  crudo:      '#3a7a9a',
+  adaptado:   '#2d8a6e',
+  calco:      '#8a6e2d',
+  pseudo:     '#7a2d8a',
+  GEI_stricto:'#c8900a',
+  GEI_lato:   '#2d5a9a',
+  falso:      '#8a2d2d',
+};
+
+const TYPE_LABELS = {
+  crudo:       'Anglicismo crudo',
+  adaptado:    'Anglicismo adaptado',
+  calco:       'Calco semántico',
+  pseudo:      'Pseudoanglicismo',
+  GEI_stricto: 'GEI stricto sensu',
+  GEI_lato:    'GEI sensu lato',
+  falso:       'Falso anglicismo',
+};
+
+const SYSTEM_PROMPT = `Eres un clasificador especializado en anglicismos del paisaje lingüístico comercial urbano gallego, especialmente del fenómeno Ferrolinglish en Ferrol.
+
+Clasifica según esta tipología:
+1. crudo – forma inglesa sin adaptación (shop, fitness, coffee)
+2. adaptado – forma inglesa con adaptación ortográfica o morfológica
+3. calco – traducción literal de expresión inglesa
+4. pseudo – parece inglés pero no existe en inglés (footing, parking)
+5. GEI_stricto – híbrido galego-inglés exclusivo de Ferrolterra, no exportable fuera de ese contexto
+6. GEI_lato – cualquier anglicismo en nomenclatura comercial ferrolana (sentido amplio)
+7. falso – apariencia inglesa pero procede de otra lengua
+
+Ámbitos: Hostelería / Moda / Tecnología / Deporte / Belleza / Alimentación / Servicios / Naval-militar / Ocio / Otros
+
+Responde SOLO con JSON válido, sin backticks, sin texto extra:
+{"forma":"palabra detectada","tipo_codigo":"crudo|adaptado|calco|pseudo|GEI_stricto|GEI_lato|falso","ambito":"sector","observacion":"nota breve máx 2 frases","confianza":"alta|media|baja","es_GEI_stricto":true}`;
+
+// ══════════════════════════════════════════════════════
+// TABS
+// ══════════════════════════════════════════════════════
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach((t,i) => t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  const tabs = ['clasificar','corpus','ayuda'];
+  document.querySelectorAll('.tab')[tabs.indexOf(name)].classList.add('active');
+  document.getElementById('panel-' + name).classList.add('active');
+  if (name === 'corpus') renderCorpus();
+}
+
+// ══════════════════════════════════════════════════════
+// GEOLOCALIZACIÓN
+// ══════════════════════════════════════════════════════
+function getLocation() {
+  const btn = document.getElementById('geo-btn');
+  const display = document.getElementById('geo-display');
+  btn.textContent = '⟳ Localizando…'; btn.disabled = true;
+  navigator.geolocation.getCurrentPosition(
+    pos => {
+      currentLocation = {
+        lat: pos.coords.latitude.toFixed(6),
+        lon: pos.coords.longitude.toFixed(6),
+        acc: Math.round(pos.coords.accuracy),
+        ts: new Date().toISOString()
+      };
+      btn.textContent = '✓ Ubicado';
+      btn.style.borderColor = 'var(--green)';
+      btn.style.color = 'var(--green)';
+      btn.disabled = false;
+      display.innerHTML = `<span style="color:var(--green)">${currentLocation.lat}, ${currentLocation.lon}</span><br><span style="color:var(--muted)">±${currentLocation.acc}m</span>`;
+    },
+    err => {
+      btn.textContent = '⊕ Reintentar'; btn.disabled = false;
+      display.innerHTML = `<span style="color:var(--red)">Error: ${err.message}</span>`;
+    },
+    { enableHighAccuracy: true, timeout: 12000 }
+  );
+}
+
+// ══════════════════════════════════════════════════════
+// IMAGEN
+// ══════════════════════════════════════════════════════
+function handleImage(input) {
+  const file = input.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentImage.base64 = e.target.result.split(',')[1];
+    currentImage.preview = e.target.result;
+    currentImage.mediaType = file.type;
+    document.getElementById('img-preview-container').innerHTML = `
+      <div class="img-preview">
+        <img src="${e.target.result}" alt="preview">
+        <div class="img-clear" onclick="clearImage()">×</div>
+      </div>`;
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImage() {
+  currentImage = { base64: null, preview: null, mediaType: null };
+  document.getElementById('img-preview-container').innerHTML = '';
+  document.getElementById('file-galeria').value = '';
+  document.getElementById('file-camara').value = '';
+}
+
+// ══════════════════════════════════════════════════════
+// CLASIFICAR
+// ══════════════════════════════════════════════════════
+async function clasificar() {
+  const texto = document.getElementById('input-texto').value.trim();
+  const estab = document.getElementById('input-establecimiento').value.trim();
+  if (!texto && !currentImage.base64) {
+    showError('Introduce un anglicismo o añade una fotografía.');
+    return;
+  }
+
+  const btn = document.getElementById('btn-clasificar');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>CLASIFICANDO…';
+  document.getElementById('error-box').style.display = 'none';
+  document.getElementById('result-container').innerHTML = '';
+
+  try {
+    let userContent;
+    if (currentImage.base64) {
+      userContent = [
+        { type: 'image', source: { type: 'base64', media_type: currentImage.mediaType, data: currentImage.base64 } },
+        { type: 'text', text: `Analiza el rótulo o texto comercial en esta imagen${texto ? '. El anglicismo de interés es: "' + texto + '"' : ''}. Clasifícalo según la tipología indicada.` }
+      ];
+    } else {
+      userContent = `Clasifica este anglicismo del paisaje lingüístico comercial: "${texto}"`;
+    }
+
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 800,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userContent }]
+      })
+    });
+
+    const data = await res.json();
+    const raw = (data.content || []).map(b => b.text || '').join('').trim();
+    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
+
+    const entry = {
+      id: Date.now(),
+      forma: parsed.forma || texto,
+      establecimiento: estab,
+      tipo_codigo: parsed.tipo_codigo,
+      tipo_label: TYPE_LABELS[parsed.tipo_codigo] || parsed.tipo_codigo,
+      ambito: parsed.ambito,
+      observacion: parsed.observacion,
+      confianza: parsed.confianza,
+      es_GEI_stricto: !!parsed.es_GEI_stricto,
+      location: currentLocation ? { ...currentLocation } : null,
+      imagePreview: currentImage.preview || null,
+      timestamp: new Date().toLocaleString('es-ES'),
+    };
+
+    saveEntry(entry);
+    renderResult(entry);
+
+  } catch(e) {
+    showError('Error al clasificar: ' + e.message + '. Comprueba tu conexión.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'CLASIFICAR';
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// RENDER RESULTADO
+// ══════════════════════════════════════════════════════
+function renderResult(entry) {
+  const col = TYPE_COLORS[entry.tipo_codigo] || '#556677';
+  const confColor = entry.confianza === 'alta' ? 'var(--green)' : entry.confianza === 'media' ? 'var(--gold)' : 'var(--red)';
+
+  document.getElementById('result-container').innerHTML = `
+    <div class="result-card" id="result-card" style="border-left:4px solid ${col}">
+      ${entry.es_GEI_stricto ? `<div class="gei-star">GEI<br>★</div>` : ''}
+      <div class="result-forma">${entry.forma}</div>
+      <span class="badge" style="background:${col}22;color:${col};border:1px solid ${col}">${entry.tipo_label}${entry.es_GEI_stricto ? ' ★' : ''}</span>
+      
+      ${entry.establecimiento ? `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin:4px 0 10px 10px">📍 ${entry.establecimiento}</div>` : ''}
+
+      <div class="result-grid">
+        <div class="result-cell">
+          <div class="cell-label">Ámbito</div>
+          <div class="cell-val">${entry.ambito}</div>
+        </div>
+        <div class="result-cell">
+          <div class="cell-label">Confianza</div>
+          <div class="cell-val" style="color:${confColor}">${(entry.confianza||'').toUpperCase()}</div>
+        </div>
+      </div>
+
+      <div class="obs-box">
+        <div class="cell-label">Observación</div>
+        <div class="obs-text">${entry.observacion}</div>
+      </div>
+
+      ${entry.location ? `
+      <div class="result-cell" style="margin-bottom:10px">
+        <div class="cell-label">Localización</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--green)">${entry.location.lat}, ${entry.location.lon}</div>
+        <div style="font-family:var(--mono);font-size:10px;color:var(--muted)">${entry.timestamp}</div>
+      </div>` : ''}
+
+      <div class="btn-row" style="margin-top:10px">
+        <button class="btn btn-primary" onclick="descargarFicha(${entry.id})" style="font-size:12px">⬇ Ficha Anexo XII</button>
+        <button class="btn btn-secondary" onclick="resetForm()" style="font-size:12px">+ Nueva</button>
+      </div>
+    </div>`;
+}
+
+// ══════════════════════════════════════════════════════
+// ANEXO XII — GENERACIÓN DE FICHA COMO IMAGEN
+// ══════════════════════════════════════════════════════
+function descargarFicha(id) {
+  const entry = corpus.find(e => e.id === id);
+  if (!entry) return;
+  generarFichaCanvas(entry, canvas => {
+    const link = document.createElement('a');
+    link.download = `ferrolinglish_${entry.forma.replace(/\s+/g,'_')}_${entry.id}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+function generarFichaCanvas(entry, callback) {
+  const W = 800, H = entry.imagePreview ? 1060 : 760;
+  const canvas = document.getElementById('anexo-canvas');
+  canvas.width = W; canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const col = TYPE_COLORS[entry.tipo_codigo] || '#556677';
+
+  // ── Fondo ──
+  ctx.fillStyle = '#0d1b2a';
+  ctx.fillRect(0, 0, W, H);
+
+  // ── Patrón de fondo ──
+  ctx.strokeStyle = 'rgba(200,144,10,0.04)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i < W + H; i += 28) {
+    ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(0, i); ctx.stroke();
+  }
+
+  // ── Cabecera ──
+  const grad = ctx.createLinearGradient(0,0,W,80);
+  grad.addColorStop(0,'#0a1628'); grad.addColorStop(0.5,'#1a3050'); grad.addColorStop(1,'#0a1628');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, W, 100);
+
+  ctx.strokeStyle = '#c8900a'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(0, 100); ctx.lineTo(W, 100); ctx.stroke();
+
+  // Título
+  ctx.fillStyle = '#c8900a';
+  ctx.font = '700 11px "Courier New"';
+  ctx.letterSpacing = '5px';
+  ctx.fillText('CLASIFICADOR DE CAMPO · ANGLICISMOS GEI', 32, 32);
+  ctx.letterSpacing = '0px';
+
+  ctx.fillStyle = '#e8dcc8';
+  ctx.font = '900 38px Georgia';
+  ctx.fillText('Ferrolinglish', 30, 78);
+
+  ctx.fillStyle = '#556677';
+  ctx.font = '11px "Courier New"';
+  ctx.fillText('Paisaje lingüístico comercial · Universidade da Coruña · Tesis doctoral 2026', 30, 96);
+
+  // Nº ficha
+  ctx.fillStyle = '#c8900a';
+  ctx.font = '700 12px "Courier New"';
+  ctx.textAlign = 'right';
+  ctx.fillText(`FICHA #${String(entry.id).slice(-6)}`, W - 30, 50);
+  ctx.fillStyle = '#556677';
+  ctx.font = '11px "Courier New"';
+  ctx.fillText(entry.timestamp, W - 30, 68);
+  ctx.textAlign = 'left';
+
+  let y = 120;
+
+  // ── FOTO ──
+  const drawFoto = (after) => {
+    if (!entry.imagePreview) { after(); return; }
+    const img = new Image();
+    img.onload = () => {
+      const fW = W - 60, fH = 260;
+      const ratio = Math.min(fW / img.width, fH / img.height);
+      const dW = img.width * ratio, dH = img.height * ratio;
+      const dx = 30 + (fW - dW) / 2;
+
+      ctx.save();
+      ctx.beginPath();
+      roundRect(ctx, 30, y, fW, fH, 8);
+      ctx.clip();
+      ctx.drawImage(img, dx, y, dW, dH);
+      ctx.restore();
+
+      ctx.strokeStyle = '#2a4a6a'; ctx.lineWidth = 1;
+      ctx.beginPath(); roundRect(ctx, 30, y, fW, fH, 8); ctx.stroke();
+
+      y += fH + 18;
+      after();
+    };
+    img.src = entry.imagePreview;
+  };
+
+  const continuar = () => {
+    // ── FORMA PRINCIPAL ──
+    ctx.fillStyle = col + '22';
+    roundRect(ctx, 30, y, W - 60, 80, 8);
+    ctx.fill();
+    ctx.strokeStyle = col; ctx.lineWidth = 2;
+    ctx.beginPath(); roundRect(ctx, 30, y, W - 60, 80, 8); ctx.stroke();
+
+    // Línea izquierda
+    ctx.fillStyle = col;
+    ctx.fillRect(30, y, 5, 80);
+
+    ctx.fillStyle = '#e8dcc8';
+    ctx.font = '900 44px Georgia';
+    ctx.fillText(entry.forma, 48, y + 52);
+
+    if (entry.es_GEI_stricto) {
+      ctx.fillStyle = '#c8900a';
+      ctx.font = '700 13px "Courier New"';
+      ctx.textAlign = 'right';
+      ctx.fillText('★ GEI stricto sensu', W - 46, y + 30);
+      ctx.textAlign = 'left';
+    }
+
+    y += 96;
+
+    // ── BADGE TIPO ──
+    ctx.fillStyle = col + '33';
+    roundRect(ctx, 30, y, 280, 36, 18);
+    ctx.fill();
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5;
+    ctx.beginPath(); roundRect(ctx, 30, y, 280, 36, 18); ctx.stroke();
+    ctx.fillStyle = col;
+    ctx.font = '700 12px "Courier New"';
+    ctx.fillText(entry.tipo_label.toUpperCase(), 46, y + 23);
+
+    // ── ESTABLECIMIENTO ──
+    if (entry.establecimiento) {
+      ctx.fillStyle = '#b8ccd8';
+      ctx.font = '14px "Courier New"';
+      ctx.fillText('📍 ' + entry.establecimiento, 330, y + 23);
+    }
+
+    y += 54;
+
+    // ── GRID INFO ──
+    const cells = [
+      { label: 'ÁMBITO', val: entry.ambito },
+      { label: 'CONFIANZA', val: (entry.confianza||'').toUpperCase() },
+    ];
+    cells.forEach((c, i) => {
+      const cx = 30 + i * 200;
+      ctx.fillStyle = '#0f2035';
+      roundRect(ctx, cx, y, 185, 60, 6); ctx.fill();
+      ctx.strokeStyle = '#1e3a5a'; ctx.lineWidth = 1;
+      ctx.beginPath(); roundRect(ctx, cx, y, 185, 60, 6); ctx.stroke();
+      ctx.fillStyle = '#556677'; ctx.font = '9px "Courier New"';
+      ctx.fillText(c.label, cx + 12, y + 17);
+      ctx.fillStyle = c.label === 'CONFIANZA'
+        ? (c.val === 'ALTA' ? '#4ecf9e' : c.val === 'MEDIA' ? '#c8900a' : '#cf4e4e')
+        : '#e8dcc8';
+      ctx.font = '700 15px "Courier New"'; ctx.fillText(c.val, cx + 12, y + 42);
+    });
+
+    y += 78;
+
+    // ── OBSERVACIÓN ──
+    ctx.fillStyle = '#0f2035';
+    roundRect(ctx, 30, y, W - 60, 90, 8); ctx.fill();
+    ctx.strokeStyle = '#1e3a5a'; ctx.lineWidth = 1;
+    ctx.beginPath(); roundRect(ctx, 30, y, W - 60, 90, 8); ctx.stroke();
+    ctx.fillStyle = '#556677'; ctx.font = '9px "Courier New"';
+    ctx.fillText('OBSERVACIÓN', 44, y + 18);
+    ctx.fillStyle = '#b8ccd8'; ctx.font = '13px Georgia';
+    wrapText(ctx, entry.observacion, 44, y + 38, W - 88, 20);
+
+    y += 108;
+
+    // ── LOCALIZACIÓN ──
+    if (entry.location) {
+      ctx.fillStyle = '#0f2035';
+      roundRect(ctx, 30, y, W - 60, 62, 8); ctx.fill();
+      ctx.strokeStyle = '#1e3a5a'; ctx.lineWidth = 1;
+      ctx.beginPath(); roundRect(ctx, 30, y, W - 60, 62, 8); ctx.stroke();
+      ctx.fillStyle = '#556677'; ctx.font = '9px "Courier New"';
+      ctx.fillText('LOCALIZACIÓN GPS', 44, y + 18);
+      ctx.fillStyle = '#4ecf9e'; ctx.font = '700 13px "Courier New"';
+      ctx.fillText(`${entry.location.lat}, ${entry.location.lon}  ±${entry.location.acc}m`, 44, y + 40);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#556677'; ctx.font = '11px "Courier New"';
+      ctx.fillText(entry.timestamp, W - 44, y + 40);
+      ctx.textAlign = 'left';
+      y += 80;
+    }
+
+    // ── PIE ──
+    ctx.strokeStyle = '#c8900a44'; ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(30, H - 36); ctx.lineTo(W - 30, H - 36); ctx.stroke();
+    ctx.fillStyle = '#2a3a4a'; ctx.font = '10px "Courier New"';
+    ctx.fillText('El inglés entró por los monos de trabajo y sale por las tiendas · J. F. Pereira Ameneiro', 30, H - 16);
+    ctx.textAlign = 'right';
+    ctx.fillText('UDC · Narón 2026', W - 30, H - 16);
+    ctx.textAlign = 'left';
+
+    callback(canvas);
+  };
+
+  drawFoto(continuar);
+}
+
+// Helpers canvas
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.lineTo(x + w - r, y); ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+  ctx.lineTo(x + w, y + h - r); ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+  ctx.lineTo(x + r, y + h); ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+  ctx.lineTo(x, y + r); ctx.quadraticCurveTo(x, y, x + r, y);
+  ctx.closePath();
+}
+
+function wrapText(ctx, text, x, y, maxWidth, lineH) {
+  const words = text.split(' '); let line = '';
+  for (let w of words) {
+    const test = line + w + ' ';
+    if (ctx.measureText(test).width > maxWidth && line) {
+      ctx.fillText(line.trim(), x, y); line = w + ' '; y += lineH;
+    } else { line = test; }
+  }
+  ctx.fillText(line.trim(), x, y);
+}
+
+// ══════════════════════════════════════════════════════
+// CORPUS / STORAGE
+// ══════════════════════════════════════════════════════
+function saveEntry(entry) {
+  // Guardar sin imagePreview completo para ahorrar espacio (solo thumbnail)
+  const toSave = { ...entry };
+  // Guardamos el preview completo para la ficha
+  corpus.unshift(toSave);
+  try {
+    localStorage.setItem('ferrolinglish_corpus', JSON.stringify(corpus.slice(0, 200)));
+  } catch(e) {
+    // Si se llena el storage, quitar previews de los más antiguos
+    corpus.forEach((e,i) => { if(i > 20) e.imagePreview = null; });
+    localStorage.setItem('ferrolinglish_corpus', JSON.stringify(corpus.slice(0, 200)));
+  }
+}
+
+function renderCorpus() {
+  const container = document.getElementById('history-container');
+  document.getElementById('corpus-count').textContent = `${corpus.length} entrada${corpus.length !== 1 ? 's' : ''}`;
+  if (!corpus.length) {
+    container.innerHTML = `<div class="empty"><div class="empty-icon">📂</div>El corpus está vacío.<br>Empieza clasificando anglicismos.</div>`;
+    return;
+  }
+  container.innerHTML = `<div class="history-list">${corpus.map(e => {
+    const col = TYPE_COLORS[e.tipo_codigo] || '#556677';
+    return `<div class="history-item" style="border-left-color:${col}" onclick="mostrarEntrada(${e.id})">
+      <div style="flex:1;min-width:0">
+        <div class="history-forma">${e.forma}</div>
+        <div class="history-meta">${e.tipo_label || e.tipo_codigo} · ${e.ambito || '—'}</div>
+        <div class="history-meta" style="color:var(--muted);font-size:9px">${e.timestamp}</div>
+      </div>
+      <div class="history-badges">
+        ${e.es_GEI_stricto ? `<span style="color:var(--gold);font-size:12px">★</span>` : ''}
+        ${e.location ? `<span style="font-size:11px">📍</span>` : ''}
+        <button class="btn btn-primary btn-small" onclick="event.stopPropagation();descargarFichaCorpus(${e.id})" style="font-size:9px;padding:4px 8px;margin-top:4px">⬇</button>
+      </div>
+    </div>`;
+  }).join('')}</div>`;
+}
+
+function mostrarEntrada(id) {
+  const entry = corpus.find(e => e.id === id);
+  if (!entry) return;
+  switchTab('clasificar');
+  renderResult(entry);
+  document.getElementById('panel-clasificar').scrollTop = 0;
+  window.scrollTo(0, 0);
+}
+
+function descargarFichaCorpus(id) {
+  const entry = corpus.find(e => e.id === id);
+  if (!entry) return;
+  generarFichaCanvas(entry, canvas => {
+    const link = document.createElement('a');
+    link.download = `ferrolinglish_${entry.forma.replace(/\s+/g,'_')}_${entry.id}.png`;
+    link.href = canvas.toDataURL('image/png');
+    link.click();
+  });
+}
+
+function clearCorpus() {
+  if (!confirm('¿Vaciar todo el corpus? Esta acción no se puede deshacer.')) return;
+  corpus = [];
+  localStorage.removeItem('ferrolinglish_corpus');
+  renderCorpus();
+}
+
+// ══════════════════════════════════════════════════════
+// EXPORTAR CSV
+// ══════════════════════════════════════════════════════
+function exportCSV() {
+  if (!corpus.length) { alert('El corpus está vacío.'); return; }
+  const headers = ['id','forma','establecimiento','tipo_codigo','tipo_label','ambito','observacion','confianza','es_GEI_stricto','lat','lon','precision_m','timestamp'];
+  const rows = corpus.map(e => [
+    e.id,
+    `"${(e.forma||'').replace(/"/g,"'")}"`,
+    `"${(e.establecimiento||'').replace(/"/g,"'")}"`,
+    e.tipo_codigo,
+    `"${(e.tipo_label||'').replace(/"/g,"'")}"`,
+    `"${(e.ambito||'').replace(/"/g,"'")}"`,
+    `"${(e.observacion||'').replace(/"/g,"'")}"`,
+    e.confianza,
+    e.es_GEI_stricto,
+    e.location?.lat || '',
+    e.location?.lon || '',
+    e.location?.acc || '',
+    `"${e.timestamp||''}"`
+  ].join(','));
+  const csv = '\uFEFF' + [headers.join(','), ...rows].join('\n'); // BOM para Excel
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `BD_Anglicismos_Ferrol_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ══════════════════════════════════════════════════════
+// UTILIDADES
+// ══════════════════════════════════════════════════════
+function showError(msg) {
+  const box = document.getElementById('error-box');
+  box.className = 'alert alert-err';
+  box.textContent = msg;
+  box.style.display = 'block';
+}
+
+function resetForm() {
+  document.getElementById('input-texto').value = '';
+  document.getElementById('input-establecimiento').value = '';
+  clearImage();
+  document.getElementById('result-container').innerHTML = '';
+  document.getElementById('error-box').style.display = 'none';
+  document.getElementById('input-texto').focus();
+}
+
+function shareApp() {
+  if (navigator.share) {
+    navigator.share({ title: 'Ferrolinglish', text: 'Clasificador de anglicismos GEI', url: window.location.href });
+  } else {
+    navigator.clipboard?.writeText(window.location.href).then(() => alert('Enlace copiado al portapapeles.'));
+  }
+}
+
+// ══════════════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════════════
+document.addEventListener('DOMContentLoaded', () => {
+  // Autogeolocalizar si hay permiso
+  if (navigator.permissions) {
+    navigator.permissions.query({ name: 'geolocation' }).then(p => {
+      if (p.state === 'granted') getLocation();
+    });
+  }
+});
+</script>
+</body>
+</html>
