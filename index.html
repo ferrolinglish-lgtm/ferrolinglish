@@ -374,6 +374,7 @@
     <div class="card-label">Entrada</div>
 
     <!-- Establecimiento (opcional) -->
+    <input type="text" id="input-colaborador" placeholder="Tu nombre (ej: José, María…)" style="margin-bottom:10px;font-size:14px;">
     <input type="text" id="input-establecimiento" placeholder="Nombre del establecimiento (opcional)" style="margin-bottom:10px;font-size:14px;">
 
     <!-- Anglicismo / texto del rótulo -->
@@ -394,6 +395,7 @@
 
   <!-- ERROR -->
   <div id="error-box" style="display:none"></div>
+  <div id="sync-indicator" style="font-family:var(--mono);font-size:11px;text-align:center;padding:4px;min-height:20px;"></div>
 
   <!-- RESULTADO -->
   <div id="result-container"></div>
@@ -457,10 +459,7 @@
 // ══════════════════════════════════════════════════════
 // ESTADO
 // ══════════════════════════════════════════════════════
-let currentLocation = null;
-let currentImage = { base64: null, preview: null, mediaType: null };
-let corpus = JSON.parse(localStorage.getItem('ferrolinglish_corpus') || '[]');
-const ANTHROPIC_KEYconst = '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';
+const ANTHROPIC_KEY = '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';
 const GAS_URL = 'https://script.google.com/macros/s/AKfycbwGHPai0R6sDVdmkslc2MYdFgFLgHmltNd--VetxOvO-F0UrPLbKcqfO1Ubs3TM51YGUA/exec';
 
 function syncToGoogle(entry) {
@@ -478,8 +477,12 @@ function syncToGoogle(entry) {
     method: 'POST', mode: 'no-cors',
     headers: { 'Content-Type': 'text/plain' },
     body: JSON.stringify(payload)
-  }).catch(e => console.warn('Sync error:', e));
+  }).catch(e => console.warn('Sync:', e));
 }
+
+let currentLocation = null;
+let currentImage = { base64: null, preview: null, mediaType: null };
+let corpus = JSON.parse(localStorage.getItem('ferrolinglish_corpus') || '[]');
 
 const TYPE_COLORS = {
   crudo:      '#3a7a9a',
@@ -590,29 +593,26 @@ function clearImage() {
 async function clasificar() {
   const texto = document.getElementById('input-texto').value.trim();
   const estab = document.getElementById('input-establecimiento').value.trim();
-  const colaborador = document.getElementById('input-colaborador') ? document.getElementById('input-colaborador').value.trim() || 'Anónimo' : 'Anónimo';
+  const colaborador = (document.getElementById('input-colaborador') || {}).value?.trim() || 'Anónimo';
   if (!texto && !currentImage.base64) {
     showError('Introduce un anglicismo o añade una fotografía.');
     return;
   }
-
   const btn = document.getElementById('btn-clasificar');
   btn.disabled = true;
   btn.innerHTML = '<span class="spinner"></span>CLASIFICANDO…';
   document.getElementById('error-box').style.display = 'none';
   document.getElementById('result-container').innerHTML = '';
-
   try {
     let userContent;
     if (currentImage.base64) {
       userContent = [
         { type: 'image', source: { type: 'base64', media_type: currentImage.mediaType, data: currentImage.base64 } },
-        { type: 'text', text: `Analiza el rótulo en esta imagen${texto ? '. El anglicismo es: "' + texto + '"' : ''}. Clasifícalo.` }
+        { type: 'text', text: texto ? 'El anglicismo es: "' + texto + '". Clasifícalo.' : 'Clasifica el anglicismo del rótulo.' }
       ];
     } else {
-      userContent = `Clasifica este anglicismo: "${texto}"`;
+      userContent = 'Clasifica este anglicismo: "' + texto + '"';
     }
-
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -628,12 +628,10 @@ async function clasificar() {
         messages: [{ role: 'user', content: userContent }]
       })
     });
-
     const data = await res.json();
     if (data.error) throw new Error(data.error.message);
     const raw = (data.content || []).map(b => b.text || '').join('').trim();
     const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
-
     const entry = {
       id: Date.now(),
       colaborador: colaborador,
@@ -649,14 +647,11 @@ async function clasificar() {
       imagePreview: currentImage.preview || null,
       timestamp: new Date().toLocaleString('es-ES'),
     };
-
     saveEntry(entry);
     renderResult(entry);
     syncToGoogle(entry);
-
     const ind = document.getElementById('sync-indicator');
     if (ind) { ind.textContent = '✓ Enviado a Google Sheets'; ind.style.color = 'var(--green)'; setTimeout(() => { ind.textContent=''; }, 4000); }
-
   } catch(e) {
     showError('Error al clasificar: ' + e.message);
   } finally {
