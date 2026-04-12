@@ -374,6 +374,7 @@
     <div class="card-label">Entrada</div>
 
     <!-- Establecimiento (opcional) -->
+    <input type="text" id="input-colaborador" placeholder="Tu nombre (ej: José, María…)" style="margin-bottom:10px;font-size:14px;">
     <input type="text" id="input-establecimiento" placeholder="Nombre del establecimiento (opcional)" style="margin-bottom:10px;font-size:14px;">
 
     <!-- Anglicismo / texto del rótulo -->
@@ -394,6 +395,7 @@
 
   <!-- ERROR -->
   <div id="error-box" style="display:none"></div>
+  <div id="sync-indicator" style="font-family:var(--mono);font-size:11px;text-align:center;padding:4px;min-height:20px;color:var(--green)"></div>
 
   <!-- RESULTADO -->
   <div id="result-container"></div>
@@ -609,6 +611,7 @@ async function clasificar() {
 
     const entry = {
       id: Date.now(),
+      colaborador: colaborador,
       forma: parsed.forma || texto,
       establecimiento: estab,
       tipo_codigo: parsed.tipo_codigo,
@@ -624,6 +627,15 @@ async function clasificar() {
 
     saveEntry(entry);
     renderResult(entry);
+    // Sync to Google in background
+    syncToGoogle(entry).then(ok => {
+      const indicator = document.getElementById('sync-indicator');
+      if (indicator) {
+        indicator.textContent = ok ? '✓ Guardado en Google' : '⚠ Sin conexión, guardado local';
+        indicator.style.color = ok ? 'var(--green)' : 'var(--gold)';
+        setTimeout(() => { if(indicator) indicator.textContent = ''; }, 4000);
+      }
+    });
 
   } catch(e) {
     showError('Error al clasificar: ' + e.message + '. Comprueba tu conexión.');
@@ -646,7 +658,8 @@ function renderResult(entry) {
       <div class="result-forma">${entry.forma}</div>
       <span class="badge" style="background:${col}22;color:${col};border:1px solid ${col}">${entry.tipo_label}${entry.es_GEI_stricto ? ' ★' : ''}</span>
       
-      ${entry.establecimiento ? `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin:4px 0 10px 10px">📍 ${entry.establecimiento}</div>` : ''}
+      <div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin:4px 0 2px 10px">👤 ${entry.colaborador || 'Anónimo'}</div>
+      ${entry.establecimiento ? `<div style="font-family:var(--mono);font-size:11px;color:var(--muted);margin:2px 0 10px 10px">📍 ${entry.establecimiento}</div>` : ''}
 
       <div class="result-grid">
         <div class="result-cell">
