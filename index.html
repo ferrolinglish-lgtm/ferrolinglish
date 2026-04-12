@@ -567,12 +567,10 @@ function clearImage() {
 // ══════════════════════════════════════════════════════
 // CLASIFICAR
 // ══════════════════════════════════════════════════════
-const GAS_URL = 'https://script.google.com/macros/s/AKfycbwGHPai0R6sDVdmkslc2MYdFgFLgHmltNd--VetxOvO-F0UrPLbKcqfO1Ubs3TM51YGUA/exec';
-
 async function clasificar() {
   const texto = document.getElementById('input-texto').value.trim();
   const estab = document.getElementById('input-establecimiento').value.trim();
-  const colaborador = document.getElementById('input-colaborador').value.trim() || 'Anónimo';
+  const colaborador = document.getElementById('input-colaborador') ? document.getElementById('input-colaborador').value.trim() || 'Anónimo' : 'Anónimo';
   if (!texto && !currentImage.base64) {
     showError('Introduce un anglicismo o añade una fotografía.');
     return;
@@ -583,42 +581,41 @@ async function clasificar() {
   btn.innerHTML = '<span class="spinner"></span>CLASIFICANDO…';
   document.getElementById('error-box').style.display = 'none';
   document.getElementById('result-container').innerHTML = '';
-  document.getElementById('sync-indicator').textContent = '';
 
   try {
-    const payload = {
-      texto: texto || '',
-      imagen: currentImage.base64 || null,
-      mediaType: currentImage.mediaType || null,
-      colaborador: colaborador,
-      establecimiento: estab,
-      lat: currentLocation?.lat || '',
-      lon: currentLocation?.lon || '',
-      precision: currentLocation?.acc || '',
-      timestamp: new Date().toLocaleString('es-ES'),
-      id: Date.now()
-    };
+    let userContent;
+    if (currentImage.base64) {
+      userContent = [
+        { type: 'image', source: { type: 'base64', media_type: currentImage.mediaType, data: currentImage.base64 } },
+        { type: 'text', text: `Analiza el rótulo en esta imagen${texto ? '. El anglicismo es: "' + texto + '"' : ''}. Clasifícalo.` }
+      ];
+    } else {
+      userContent = `Clasifica este anglicismo: "${texto}"`;
+    }
 
-    const res = await fetch(GAS_URL, {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
-      redirect: 'follow',
-      headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify(payload)
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_KEY,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 500,
+        system: SYSTEM_PROMPT,
+        messages: [{ role: 'user', content: userContent }]
+      })
     });
 
-    const text = await res.text();
-    let data;
-    try {
-      data = JSON.parse(text);
-    } catch(pe) {
-      throw new Error('Respuesta inesperada del servidor. Intenta de nuevo.');
-    }
-    if (!data.ok) throw new Error(data.error || 'Error del servidor');
-
-    const parsed = data.clasificacion;
+    const data = await res.json();
+    if (data.error) throw new Error(data.error.message);
+    const raw = (data.content || []).map(b => b.text || '').join('').trim();
+    const parsed = JSON.parse(raw.replace(/```json|```/g, '').trim());
 
     const entry = {
-      id: payload.id,
+      id: Date.now(),
       colaborador: colaborador,
       forma: parsed.forma || texto,
       establecimiento: estab,
@@ -630,16 +627,15 @@ async function clasificar() {
       es_GEI_stricto: !!parsed.es_GEI_stricto,
       location: currentLocation ? { ...currentLocation } : null,
       imagePreview: currentImage.preview || null,
-      timestamp: payload.timestamp,
+      timestamp: new Date().toLocaleString('es-ES'),
     };
 
     saveEntry(entry);
     renderResult(entry);
+    syncToGoogle(entry);
 
-    const indicator = document.getElementById('sync-indicator');
-    indicator.textContent = '✓ Guardado en Google Sheets y Drive';
-    indicator.style.color = 'var(--green)';
-    setTimeout(() => { indicator.textContent = ''; }, 5000);
+    const ind = document.getElementById('sync-indicator');
+    if (ind) { ind.textContent = '✓ Enviado a Google Sheets'; ind.style.color = 'var(--green)'; setTimeout(() => { ind.textContent=''; }, 4000); }
 
   } catch(e) {
     showError('Error al clasificar: ' + e.message);
