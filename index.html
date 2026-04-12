@@ -601,10 +601,18 @@ async function clasificar() {
 
     const res = await fetch(GAS_URL, {
       method: 'POST',
+      redirect: 'follow',
+      headers: { 'Content-Type': 'text/plain' },
       body: JSON.stringify(payload)
     });
 
-    const data = await res.json();
+    const text = await res.text();
+    let data;
+    try {
+      data = JSON.parse(text);
+    } catch(pe) {
+      throw new Error('Respuesta inesperada del servidor. Intenta de nuevo.');
+    }
     if (!data.ok) throw new Error(data.error || 'Error del servidor');
 
     const parsed = data.clasificacion;
