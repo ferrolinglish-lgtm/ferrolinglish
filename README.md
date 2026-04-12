@@ -1,2 +1,2 @@
 # ferrolinglish
- Clasificador de anglicismos GEI · Tesis doctoral UDC
+ Clasificador de anglicismos GEI
