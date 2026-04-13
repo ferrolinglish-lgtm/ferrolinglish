@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Ferrolinglish · Clasificador de campo</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Source+Code+Pro:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #f4f1eb; color: #1a2e45; font-family: 'Lato', sans-serif; min-height: 100vh; padding-bottom: 40px; }
+
+.header {
+  background: linear-gradient(160deg, #1a2e45 0%, #243d5a 60%, #1a2e45 100%);
+  border-bottom: 3px solid #b8780a;
+  padding: 22px 16px 18px; text-align: center; position: relative;
+}
+.header::before { content:''; position:absolute; inset:0; background: repeating-linear-gradient(45deg, transparent, transparent 20px, rgba(200,144,10,0.05) 20px, rgba(200,144,10,0.05) 21px); }
+.eyebrow { font-family:'Source Code Pro',monospace; font-size:9px; letter-spacing:5px; color:#b8780a; margin-bottom:6px; text-transform:uppercase; }
+.title { font-family:'Playfair Display',serif; font-size:32px; font-weight:900; color:#f4f1eb; }
+.subtitle { font-family:'Source Code Pro',monospace; font-size:10px; color:#8899aa; margin-top:5px; letter-spacing:2px; }
+.anchor { position:absolute; right:16px; top:50%; transform:translateY(-50%); font-size:28px; opacity:0.2; color:#b8780a; }
+
+.container { max-width:480px; margin:0 auto; padding:16px; }
+
+.card { background:#fff; border:1px solid #e8e2d6; border-radius:10px; padding:16px; margin-bottom:12px; box-shadow:0 2px 8px rgba(0,0,0,0.06); }
+.card-label { font-family:'Source Code Pro',monospace; font-size:9px; letter-spacing:3px; color:#9a8e7e; margin-bottom:12px; text-transform:uppercase; }
+
+input[type=text] { width:100%; background:#f4f1eb; border:1.5px solid #e8e2d6; border-radius:7px; color:#1a2e45; padding:11px 13px; font-size:16px; font-family:'Lato',sans-serif; outline:none; transition:border-color 0.2s; margin-bottom:10px; }
+input[type=text]:focus { border-color:#b8780a; }
+input::placeholder { color:#c8bfaa; }
+input.big { font-size:20px; font-weight:700; }
+
+.btn { width:100%; border:none; border-radius:7px; padding:14px; font-size:13px; font-weight:700; font-family:'Source Code Pro',monospace; letter-spacing:2px; cursor:pointer; transition:all 0.2s; text-transform:uppercase; }
+.btn-gold { background:linear-gradient(135deg,#b8780a,#d4920e); color:#fff; }
+.btn-gold:active { transform:scale(0.98); }
+.btn-outline { background:transparent; border:1.5px solid #e8e2d6; color:#7a6e5e; margin-top:8px; }
+.btn-row { display:flex; gap:8px; margin-bottom:10px; }
+.btn-row .btn { flex:1; padding:10px; font-size:11px; }
+
+.geo-bar { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.geo-ok { font-family:'Source Code Pro',monospace; font-size:11px; color:#1a7a52; line-height:1.5; }
+.geo-err { font-family:'Source Code Pro',monospace; font-size:11px; color:#a03030; }
+
+.img-wrap { position:relative; margin-bottom:10px; }
+.img-wrap img { width:100%; border-radius:7px; border:1px solid #e8e2d6; max-height:200px; object-fit:cover; display:block; }
+.img-del { position:absolute; top:7px; right:7px; background:rgba(244,241,235,0.92); border:1px solid #e8e2d6; color:#1a2e45; border-radius:50%; width:26px; height:26px; font-size:16px; line-height:24px; text-align:center; cursor:pointer; }
+
+.success { background:linear-gradient(135deg,#f0faf5,#e8f5ee); border:2px solid #1a7a52; border-radius:12px; padding:28px 20px; text-align:center; animation:fadeUp 0.4s ease; margin-bottom:12px; }
+.success-icon { font-size:52px; margin-bottom:10px; }
+.success-title { font-family:'Playfair Display',serif; font-size:22px; font-weight:700; color:#1a2e45; margin-bottom:6px; }
+.success-forma { font-family:'Playfair Display',serif; font-size:30px; font-weight:900; color:#b8780a; margin:10px 0; }
+.success-meta { font-size:13px; color:#7a6e5e; line-height:1.7; }
+
+.spinner { display:inline-block; width:14px; height:14px; border:2px solid #e8e2d6; border-top-color:#b8780a; border-radius:50%; animation:spin 0.7s linear infinite; vertical-align:middle; margin-right:6px; }
+.err-box { background:#fdf0f0; border:1px solid #c05050; color:#a03030; border-radius:8px; padding:12px; font-size:13px; margin-bottom:12px; display:none; }
+.footer { text-align:center; font-family:'Source Code Pro',monospace; font-size:10px; color:#c8bfaa; margin-top:20px; letter-spacing:1px; }
+
+@keyframes spin { to { transform:rotate(360deg); } }
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="anchor">⚓</div>
+  <div class="eyebrow">Clasificador de campo</div>
+  <div class="title">Ferrolinglish</div>
+  <div class="subtitle">Paisaje lingüístico · Anglicismos GEI · UDC 2026</div>
+</div>
+
+<div class="container">
+
+  <div class="card">
+    <div class="card-label">Ubicación GPS</div>
+    <div class="geo-bar">
+      <button class="btn btn-outline" id="geo-btn" onclick="getLocation()" style="width:auto;padding:8px 14px;font-size:11px;margin:0">⊕ Obtener ubicación</button>
+      <div id="geo-info" style="font-family:'Source Code Pro',monospace;font-size:11px;color:#9a8e7e">Sin ubicación</div>
+    </div>
+  </div>
+
+  <div class="card" id="form-card">
+    <div class="card-label">Nueva entrada</div>
+    <input type="text" id="f-nombre" placeholder="Tu nombre (ej: José, María…)">
+    <input type="text" id="f-estab" placeholder="Nombre del establecimiento (opcional)">
+    <input type="text" id="f-anglo" class="big" placeholder="Anglicismo o texto del rótulo…">
+    <input type="text" id="f-ciudad" placeholder="Ciudad o barrio (ej: Ferrol, Narón…)">
+    <div class="btn-row">
+      <button class="btn btn-outline" onclick="document.getElementById('fg').click()">📁 Galería</button>
+      <button class="btn btn-outline" onclick="document.getElementById('fc').click()">📷 Cámara</button>
+    </div>
+    <input type="file" id="fg" accept="image/*" style="display:none" onchange="handleImg(this)">
+    <input type="file" id="fc" accept="image/*" capture="environment" style="display:none" onchange="handleImg(this)">
+    <div id="img-box"></div>
+    <div id="err-box" class="err-box"></div>
+    <button class="btn btn-gold" id="btn-send" onclick="enviar()">Enviar al corpus</button>
+  </div>
+
+  <div id="ok-box"></div>
+
+</div>
+
+<div class="footer">El inglés entró por los monos de trabajo · UDC · Narón 2026</div>
+
+<iframe id="iframe" name="iframe" style="display:none"></iframe>
+
+<script>
+var loc = null;
+var imgData = null;
+
+function getLocation() {
+  var btn = document.getElementById('geo-btn');
+  var info = document.getElementById('geo-info');
+  btn.textContent = '⟳ Localizando…'; btn.disabled = true;
+  navigator.geolocation.getCurrentPosition(
+    function(p) {
+      loc = { lat: p.coords.latitude.toFixed(6), lon: p.coords.longitude.toFixed(6), acc: Math.round(p.coords.accuracy) };
+      btn.textContent = '✓ Ubicado'; btn.style.borderColor='#1a7a52'; btn.style.color='#1a7a52'; btn.disabled=false;
+      info.innerHTML = '<span class="geo-ok">' + loc.lat + ', ' + loc.lon + '<br><span style="color:#9a8e7e">±' + loc.acc + 'm</span></span>';
+    },
+    function(e) { btn.textContent='⊕ Reintentar'; btn.disabled=false; info.innerHTML='<span class="geo-err">Sin GPS</span>'; },
+    { enableHighAccuracy:true, timeout:12000 }
+  );
+}
+
+function handleImg(input) {
+  var file = input.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    imgData = e.target.result;
+    document.getElementById('img-box').innerHTML =
+      '<div class="img-wrap"><img src="'+e.target.result+'"><div class="img-del" onclick="clearImg()">×</div></div>';
+  };
+  reader.readAsDataURL(file);
+}
+
+function clearImg() {
+  imgData = null;
+  document.getElementById('img-box').innerHTML = '';
+  document.getElementById('fg').value = '';
+  document.getElementById('fc').value = '';
+}
+
+function enviar() {
+  var nombre = document.getElementById('f-nombre').value.trim() || 'Anónimo';
+  var estab  = document.getElementById('f-estab').value.trim();
+  var anglo  = document.getElementById('f-anglo').value.trim();
+  var ciudad = document.getElementById('f-ciudad').value.trim();
+  var err    = document.getElementById('err-box');
+
+  if (!anglo) { err.textContent='Escribe el anglicismo o texto del rótulo.'; err.style.display='block'; return; }
+  err.style.display='none';
+
+  var btn = document.getElementById('btn-send');
+  btn.disabled=true; btn.innerHTML='<span class="spinner"></span>ENVIANDO…';
+
+  var gps = loc ? loc.lat+', '+loc.lon+' (±'+loc.acc+'m)' : '';
+  var ciudadFull = ciudad + (gps ? (ciudad ? ' · ' : '') + 'GPS: '+gps : '');
+
+  // Enviar al Google Form
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = 'https://docs.google.com/forms/u/0/d/e/1FAIpQLSeUSR2k8jOK9nvaWFKbU1l8F-BvIVjTgOwUmZ05BBE2FfVxbw/formResponse';
+  form.target = 'iframe';
+
+  var campos = {
+    'entry.29022646':   nombre,
+    'entry.1216163855': estab,
+    'entry.1479615235': anglo,
+    'entry.264526333':  ciudadFull
+  };
+
+  for (var k in campos) {
+    var inp = document.createElement('input');
+    inp.type='hidden'; inp.name=k; inp.value=campos[k];
+    form.appendChild(inp);
+  }
+  document.body.appendChild(form);
+  form.submit();
+  document.body.removeChild(form);
+
+  setTimeout(function() {
+    document.getElementById('form-card').style.display = 'none';
+    document.getElementById('ok-box').innerHTML =
+      '<div class="success">' +
+      '<div class="success-icon">✓</div>' +
+      '<div class="success-title">¡Enviado al corpus!</div>' +
+      '<div class="success-forma">' + escHtml(anglo) + '</div>' +
+      '<div class="success-meta">' +
+        '<strong>' + escHtml(nombre) + '</strong>' +
+        (estab ? ' · ' + escHtml(estab) : '') +
+        (ciudad ? '<br>' + escHtml(ciudad) : '') +
+        (loc ? '<br>📍 ' + loc.lat + ', ' + loc.lon : '') +
+      '</div></div>' +
+      '<button class="btn btn-outline" onclick="resetForm()">+ Nueva entrada</button>';
+  }, 900);
+}
+
+function resetForm() {
+  document.getElementById('form-card').style.display = 'block';
+  document.getElementById('ok-box').innerHTML = '';
+  document.getElementById('f-anglo').value = '';
+  document.getElementById('f-estab').value = '';
+  document.getElementById('f-ciudad').value = '';
+  clearImg();
+  var btn = document.getElementById('btn-send');
+  btn.disabled=false; btn.textContent='ENVIAR AL CORPUS';
+}
+
+function escHtml(t) {
+  return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+if (navigator.permissions) {
+  navigator.permissions.query({name:'geolocation'}).then(function(p) {
+    if (p.state==='granted') getLocation();
+  });
+}
+</script>
+</body>
+</html>
